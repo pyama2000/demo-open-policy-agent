@@ -1,9 +1,13 @@
 use axum::http::StatusCode;
-use axum::routing::get;
+use axum::routing::{get, post};
+
+mod handler;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let app = axum::Router::new().route("/healthz", get(|| async { StatusCode::OK }));
+    let app = axum::Router::new()
+        .route("/healthz", get(|| async { StatusCode::OK }))
+        .route("/auth/login", post(handler::login));
     let port = std::env::var("SERVER_PORT").unwrap_or_else(|_| "8080".to_string());
     let addr = format!("0.0.0.0:{}", port).parse()?;
     println!("listening on: {}", &addr);
