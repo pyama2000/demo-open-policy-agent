@@ -1,4 +1,5 @@
 use axum::Json;
+use axum::http::StatusCode;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
@@ -27,4 +28,20 @@ pub async fn login(Json(payload): Json<LoginRequest>) -> String {
     )
     .unwrap();
     token
+}
+
+pub async fn create() -> StatusCode {
+    StatusCode::CREATED
+}
+
+pub async fn get() -> StatusCode {
+    StatusCode::OK
+}
+
+pub async fn create_something() -> StatusCode {
+    StatusCode::CREATED
+}
+
+pub async fn get_something() -> StatusCode {
+    StatusCode::OK
 }

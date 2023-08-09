@@ -7,7 +7,10 @@ mod handler;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = axum::Router::new()
         .route("/healthz", get(|| async { StatusCode::OK }))
-        .route("/auth/login", post(handler::login));
+        .route("/auth/login", post(handler::login))
+        .route("/create", post(handler::create))
+        .route("/list", get(handler::get))
+        .route("/something", get(handler::get_something).post(handler::create_something));
     let port = std::env::var("SERVER_PORT").unwrap_or_else(|_| "8080".to_string());
     let addr = format!("0.0.0.0:{}", port).parse()?;
     println!("listening on: {}", &addr);
