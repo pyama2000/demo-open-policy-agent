@@ -11,8 +11,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/create", post(handler::create))
         .route("/list", get(handler::get))
         .route("/something", get(handler::get_something).post(handler::create_something));
-    let port = std::env::var("SERVER_PORT").unwrap_or_else(|_| "8080".to_string());
-    let addr = format!("0.0.0.0:{}", port).parse()?;
+    let addr = "0.0.0.0:8080".parse()?;
     println!("listening on: {}", &addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
