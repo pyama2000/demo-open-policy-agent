@@ -1,0 +1,13 @@
+services:
+  server:
+    container_name: server
+    build:
+      dockerfile: ./build/docker/Dockerfile
+      context: ./server
+    ports:
+      - "${SERVER_PORT}:8080"
+    healthcheck:
+      test: ["CMD", "/usr/bin/wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
