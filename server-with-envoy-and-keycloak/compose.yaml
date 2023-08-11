@@ -4,10 +4,15 @@ services:
     build:
       dockerfile: ./build/docker/Dockerfile
       context: ./server
-    ports:
-      - "${SERVER_PORT}:8080"
     healthcheck:
       test: ["CMD", "/usr/bin/wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/healthz"]
       interval: 10s
       timeout: 10s
       retries: 3
+  proxy:
+    container_name: envoy-proxy
+    image: envoyproxy/envoy:distroless-v1.27.0
+    ports:
+      - "${PROXY_PORT}:10000"
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
