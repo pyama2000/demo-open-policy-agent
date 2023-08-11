@@ -9,4 +9,4 @@ edition = "2021"
 axum = "0.6.20"
 jsonwebtoken = "8.3.0"
 serde = { version = "1.0.183", features = ["derive"] }
-tokio = { version = "1.29.1", default-features = false, features = ["macros", "rt-multi-thread", "signal"] }
+tokio = { version = "1.30.0", default-features = false, features = ["macros", "rt-multi-thread", "signal"] }
