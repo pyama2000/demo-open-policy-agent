@@ -6,17 +6,21 @@ import input.attributes.request.http
 default allow := false
 
 allow if {
+	no_authz_path
+}
+
+allow if {
 	action_allowed
 }
 
-action_allowed if {
+no_authz_path if {
 	http.method == "GET"
-	glob.match("/healthz", ["/"], http.path)
+	http.path == "/healthz"
 }
 
-action_allowed if {
+no_authz_path if {
 	http.method == "POST"
-	glob.match("/auth/login", ["/"], http.path)
+	http.path == "/auth/login"
 }
 
 action_allowed if {
