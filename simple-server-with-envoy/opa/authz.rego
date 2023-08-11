@@ -10,7 +10,8 @@ allow if {
 }
 
 allow if {
-	action_allowed
+	r := token.payload.role
+	r in is_allowed_permission
 }
 
 no_authz_path if {
@@ -23,43 +24,22 @@ no_authz_path if {
 	http.path == "/auth/login"
 }
 
-action_allowed if {
-	http.method == "POST"
-	glob.match("/create", ["/"], http.path)
-	is_admin
-}
+is_allowed_permission contains role if {
+	role_permissions := {
+		"guest": [{"method": "GET", "path": "/something"}],
+		"admin": [
+			{"method": "POST", "path": "/create"},
+			{"method": "GET", "path": "/list"},
+			{"method": "POST", "path": "/something"},
+		],
+	}
 
-action_allowed if {
-	http.method == "GET"
-	glob.match("/list", ["/"], http.path)
-	is_admin
-}
-
-action_allowed if {
-	http.method == "POST"
-	glob.match("/something", ["/"], http.path)
-	is_admin
-}
-
-action_allowed if {
-	http.method == "GET"
-	glob.match("/something", ["/"], http.path)
-	is_guest
+	some permission in role_permissions[role]
+	http.method == permission.method
+	http.path == permission.path
 }
 
 token := {"payload": payload} if {
 	[_, jwt] := split(http.headers.authorization, " ")
 	[_, payload, _] := io.jwt.decode(jwt)
-}
-
-default is_admin := false
-
-is_admin if {
-	token.payload.role == "admin"
-}
-
-default is_guest := false
-
-is_guest if {
-	token.payload.role == "guest"
 }
