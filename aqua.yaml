@@ -11,3 +11,4 @@ registries:
   ref: v4.33.0 # renovate: depName=aquaproj/aqua-registry
 packages:
 - name: open-policy-agent/opa@v0.55.0
+- name: Orange-OpenSource/hurl@4.0.0
