@@ -15,3 +15,12 @@ services:
       - "${PROXY_PORT}:10000"
     volumes:
       - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+  opa-server:
+    container_name: opa-server
+    build:
+      dockerfile: ./build/docker/Dockerfile
+      context: ./opa
+    command: ["run", "--server", "--config-file=/config.yaml", "/authz.rego"]
+    volumes:
+      - ./opa/authz.rego:/authz.rego
+      - ./opa/config.yaml:/config.yaml
