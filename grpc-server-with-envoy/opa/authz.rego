@@ -25,17 +25,14 @@ no_authz_rpc if {
 }
 
 is_allowed_permission contains role if {
-	role_permission := {
-		"admin": [
-			{"service": "misc.v1.MiscService", "rpc": "Create"},
-			{"service": "misc.v1.MiscService", "rpc": "List"},
-		],
-		"guest": [{"service": "misc.v1.MiscService", "rpc": "List"}],
-	}
+	rpc_permission := {"misc.v1.MiscService": [
+		{"rpc": "Create", "roles": ["admin"]},
+		{"rpc": "List", "roles": ["admin", "guest"]},
+	]}
 
-	some p in role_permission[role]
-	parsed_path[0] == p.service
+	some p in rpc_permission[parsed_path[0]]
 	parsed_path[1] == p.rpc
+	some _, role in p.roles
 }
 
 token := {"payload": payload} if {
