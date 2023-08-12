@@ -5,3 +5,6 @@ breaking:
 lint:
   use:
     - DEFAULT
+  ignore_only:
+    RPC_RESPONSE_STANDARD_NAME:
+      - ./auth/v1/auth_service.proto
