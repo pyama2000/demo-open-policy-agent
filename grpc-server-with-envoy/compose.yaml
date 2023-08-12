@@ -8,3 +8,10 @@ services:
       interval: 10s
       timeout: 10s
       retries: 3
+  proxy:
+    container_name: envoy-proxy
+    image: envoyproxy/envoy:distroless-v1.27.0
+    ports:
+      - "${PROXY_PORT}:10000"
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
