@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package auth.v1;
 
-import "google/protobuf/empty.proto";
-
 message SigninRequest {
   enum Role {
     ROLE_UNSPECIFIED = 0;
@@ -14,6 +12,10 @@ message SigninRequest {
   Role role = 1;
 }
 
+message SigninResponse {
+  string token = 1;
+}
+
 service AuthService {
-  rpc Signin(SigninRequest) returns (google.protobuf.Empty);
+  rpc Signin(SigninRequest) returns (SigninResponse);
 }
