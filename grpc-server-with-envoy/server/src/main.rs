@@ -20,9 +20,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .register_encoded_file_descriptor_set(MISC_SERVICE_FILE_DESCRIPTOR)
         .build()?;
 
+    let (_, health_service) = tonic_health::server::health_reporter();
+
     let addr = "0.0.0.0:50051".parse()?;
     println!("listening on: {}", &addr);
     tonic::transport::Server::builder()
+        .add_service(health_service)
         .add_service(reflection_service)
         .add_service(AuthServiceServer::new(AuthService))
         .add_service(MiscServiceServer::new(MiscService))
