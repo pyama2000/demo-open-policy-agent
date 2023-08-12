@@ -8,13 +8,6 @@ services:
       interval: 10s
       timeout: 10s
       retries: 3
-  proxy:
-    container_name: envoy-proxy
-    image: envoyproxy/envoy:distroless-v1.27.0
-    ports:
-      - "${PROXY_PORT}:10000"
-    volumes:
-      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
   opa-server:
     container_name: opa-server
     build:
@@ -24,3 +17,20 @@ services:
     volumes:
       - ./opa/authz.rego:/authz.rego
       - ./opa/config.yaml:/config.yaml
+    healthcheck:
+      test: ["CMD", "/bin/wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8181/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+  proxy:
+    container_name: envoy-proxy
+    image: envoyproxy/envoy:distroless-v1.27.0
+    ports:
+      - "${PROXY_PORT}:10000"
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      server:
+        condition: service_healthy
+      opa-server:
+        condition: service_healthy
