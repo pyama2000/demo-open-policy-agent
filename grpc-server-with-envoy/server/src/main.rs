@@ -6,7 +6,9 @@ use crate::proto::{
         auth_service_server::AuthServiceServer, SigninRequest, SigninResponse,
         FILE_DESCRIPTOR as AUTH_SERVICE_FILE_DESCRIPTOR,
     },
-    misc::v1::FILE_DESCRIPTOR as MISC_SERVICE_FILE_DESCRIPTOR,
+    misc::v1::{
+        misc_service_server::MiscServiceServer, FILE_DESCRIPTOR as MISC_SERVICE_FILE_DESCRIPTOR,
+    },
 };
 
 mod proto;
@@ -23,6 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tonic::transport::Server::builder()
         .add_service(reflection_service)
         .add_service(AuthServiceServer::new(AuthService))
+        .add_service(MiscServiceServer::new(MiscService))
         .serve_with_shutdown(addr, shutdown_signal())
         .await?;
 
@@ -105,5 +108,18 @@ impl proto::auth::v1::auth_service_server::AuthService for AuthService {
         .map_err(|e| Status::internal(e.to_string()))?;
 
         Ok(Response::new(SigninResponse { token }))
+    }
+}
+
+struct MiscService;
+
+#[tonic::async_trait]
+impl proto::misc::v1::misc_service_server::MiscService for MiscService {
+    async fn create(&self, _: Request<()>) -> Result<Response<()>, Status> {
+        Ok(Response::new(()))
+    }
+
+    async fn list(&self, _: Request<()>) -> Result<Response<()>, Status> {
+        Ok(Response::new(()))
     }
 }
