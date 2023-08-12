@@ -12,3 +12,5 @@ registries:
 packages:
 - name: open-policy-agent/opa@v0.55.0
 - name: Orange-OpenSource/hurl@4.0.0
+- name: bufbuild/buf@v1.26.1
+- name: protocolbuffers/protobuf/protoc@v24.0

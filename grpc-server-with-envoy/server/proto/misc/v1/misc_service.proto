@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package misc.v1;
+
+import "google/protobuf/empty.proto";
+
+service MiscService {
+  rpc Create(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
