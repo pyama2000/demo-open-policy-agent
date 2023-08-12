@@ -1,5 +1,6 @@
 services:
   server:
+    container_name: server
     build:
       dockerfile: ./build/docker/Dockerfile
       context: ./server
