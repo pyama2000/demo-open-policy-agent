@@ -1,10 +1,25 @@
 services:
   server:
+    container_name: server
     build:
       dockerfile: ./build/docker/Dockerfile
       context: ./server
     healthcheck:
       test: ["CMD", "/bin/grpc_health_probe", "-addr=localhost:50051", "grpc.health.v1.Health.Check"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+  opa-server:
+    container_name: opa-server
+    build:
+      dockerfile: ./build/docker/Dockerfile
+      context: ./opa
+    command: ["run", "--server", "--config-file=/config.yaml", "/authz.rego"]
+    volumes:
+      - ./opa/authz.rego:/authz.rego
+      - ./opa/config.yaml:/config.yaml
+    healthcheck:
+      test: ["CMD", "/bin/wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8181/health"]
       interval: 10s
       timeout: 10s
       retries: 3
@@ -15,3 +30,8 @@ services:
       - "${PROXY_PORT}:10000"
     volumes:
       - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      server:
+        condition: service_healthy
+      opa-server:
+        condition: service_healthy

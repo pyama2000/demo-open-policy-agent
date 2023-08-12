@@ -16,6 +16,16 @@ static_resources:
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
           http_filters:
+          - name: envoy.filters.http.ext_authz
+          # - name: envoy.ext_authz
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+              failure_mode_allow: false
+              grpc_service:
+                envoy_grpc:
+                  cluster_name: authz-opa
+                timeout: 0.25s
+              transport_api_version: V3
           - name: envoy.filters.http.router
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
@@ -43,3 +53,19 @@ static_resources:
               socket_address:
                 address: server
                 port_value: 50051
+  - name: authz-opa
+    type: STRICT_DNS
+    typed_extension_protocol_options:
+      envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+        "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+        explicit_http_config:
+          http2_protocol_options: {}
+    load_assignment:
+      cluster_name: authz-opa
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: opa-server
+                port_value: 9191
