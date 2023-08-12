@@ -1,0 +1,10 @@
+services:
+  server:
+    build:
+      dockerfile: ./build/docker/Dockerfile
+      context: ./server
+    healthcheck:
+      test: ["CMD", "/bin/grpc_health_probe", "-addr=localhost:50051", "grpc.health.v1.Health.Check"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
