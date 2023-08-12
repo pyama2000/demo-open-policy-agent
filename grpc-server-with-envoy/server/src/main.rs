@@ -1,5 +1,11 @@
+use serde::Serialize;
+use tonic::{Request, Response, Status};
+
 use crate::proto::{
-    auth::v1::FILE_DESCRIPTOR as AUTH_SERVICE_FILE_DESCRIPTOR,
+    auth::v1::{
+        auth_service_server::AuthServiceServer, SigninRequest, SigninResponse,
+        FILE_DESCRIPTOR as AUTH_SERVICE_FILE_DESCRIPTOR,
+    },
     misc::v1::FILE_DESCRIPTOR as MISC_SERVICE_FILE_DESCRIPTOR,
 };
 
@@ -16,6 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("listening on: {}", &addr);
     tonic::transport::Server::builder()
         .add_service(reflection_service)
+        .add_service(AuthServiceServer::new(AuthService))
         .serve_with_shutdown(addr, shutdown_signal())
         .await?;
 
@@ -42,4 +49,61 @@ async fn shutdown_signal() {
     }
 
     println!("signal received, starting graceful shutdown");
+}
+
+enum Role {
+    Admin,
+    Guest,
+}
+
+impl std::fmt::Display for Role {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Role::Admin => write!(f, "admin"),
+            Role::Guest => write!(f, "guest"),
+        }
+    }
+}
+
+#[derive(Serialize)]
+struct Claim {
+    role: String,
+}
+
+impl Claim {
+    fn new(role: Role) -> Self {
+        Self {
+            role: role.to_string(),
+        }
+    }
+}
+
+struct AuthService;
+
+#[tonic::async_trait]
+impl proto::auth::v1::auth_service_server::AuthService for AuthService {
+    async fn signin(
+        &self,
+        req: Request<SigninRequest>,
+    ) -> Result<Response<SigninResponse>, Status> {
+        let req = req.into_inner();
+        let role = match req.role() {
+            proto::auth::v1::signin_request::Role::Unspecified => {
+                return Err(Status::invalid_argument("invalid role"))
+            }
+            proto::auth::v1::signin_request::Role::Admin => Role::Admin,
+            proto::auth::v1::signin_request::Role::Guest => Role::Guest,
+        };
+
+        let key = b"secret";
+        let claim = Claim::new(role);
+        let token = jsonwebtoken::encode(
+            &jsonwebtoken::Header::default(),
+            &claim,
+            &jsonwebtoken::EncodingKey::from_secret(key),
+        )
+        .map_err(|e| Status::internal(e.to_string()))?;
+
+        Ok(Response::new(SigninResponse { token }))
+    }
 }
