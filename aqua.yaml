@@ -13,6 +13,6 @@ packages:
 - name: open-policy-agent/opa@v0.55.0
 - name: Orange-OpenSource/hurl@4.0.0
 - name: bufbuild/buf@v1.26.1
-- name: protocolbuffers/protobuf/protoc@v24.0
+- name: protocolbuffers/protobuf/protoc@v24.2
 - name: fullstorydev/grpcurl@v1.8.7
 - name: grpc-ecosystem/grpc-health-probe@v0.4.19
