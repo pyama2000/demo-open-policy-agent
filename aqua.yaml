@@ -14,5 +14,5 @@ packages:
 - name: Orange-OpenSource/hurl@4.0.0
 - name: bufbuild/buf@v1.26.1
 - name: protocolbuffers/protobuf/protoc@v24.2
-- name: fullstorydev/grpcurl@v1.8.7
+- name: fullstorydev/grpcurl@v1.9.1
 - name: grpc-ecosystem/grpc-health-probe@v0.4.19
