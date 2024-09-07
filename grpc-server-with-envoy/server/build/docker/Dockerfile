@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . .
 RUN cargo build --release
 
-FROM alpine:3.18.3 AS binary
+FROM alpine:3.18.9 AS binary
 ARG GRPC_HEALTH_PROBE_VERSION=v0.4.19
 ARG GRPC_HEALTH_PROBE_VERSION_ARCH="arm64"
 RUN wget -qO/bin/grpc_health_probe "https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${GRPC_HEALTH_PROBE_VERSION_ARCH}" && \
