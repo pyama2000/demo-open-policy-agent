@@ -10,7 +10,7 @@ registries:
 - type: standard
   ref: v4.42.0 # renovate: depName=aquaproj/aqua-registry
 packages:
-- name: open-policy-agent/opa@v0.55.0
+- name: open-policy-agent/opa@v0.69.0
 - name: Orange-OpenSource/hurl@4.0.0
 - name: bufbuild/buf@v1.26.1
 - name: protocolbuffers/protobuf/protoc@v24.2
