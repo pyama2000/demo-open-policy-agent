@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . .
 RUN cargo build --release
 
-FROM busybox:1.36.1-uclibc AS binary
+FROM busybox:1.37.0-uclibc AS binary
 
 FROM gcr.io/distroless/cc
 COPY --from=builder /app/target/release/server /
