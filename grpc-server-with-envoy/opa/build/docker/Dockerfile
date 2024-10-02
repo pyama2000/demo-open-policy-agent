@@ -1,4 +1,4 @@
-FROM golang:1.21.0 AS build
+FROM golang:1.23.2 AS build
 WORKDIR /src
 ENV CGO_ENABLED=0
 ENV BUILD_GOARCH="arm64"
