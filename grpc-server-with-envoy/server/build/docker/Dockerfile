@@ -1,4 +1,4 @@
-FROM rust:1.72.0 AS builder
+FROM rust:1.82.0 AS builder
 ARG PROTOC_VERSION=24.0
 ARG PROTOC_ARCH="aarch_64"
 WORKDIR /tmp
